@@ -106,9 +106,9 @@ int main(int argc, char **argv)
 
 	tmp2 = strlen(value);
 	printf("\nThe legnth of tmp2 is: %zd \n", tmp2);
-	printf("The valueh of tmp2 is: %s \n", value);
 	tmp2 = htonl(tmp2);
 	Rio_writen(clientfd, &tmp2, sizeof(tmp2));
+	printf("The valueh of tmp2 is: %s \n", value);
 
 //	Rio_writen(clientfd, value, 4);
 
