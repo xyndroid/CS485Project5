@@ -21,6 +21,9 @@ simpled: simpled.c csapp.o
 ssSet: ssSet.c csapp.o 
 	gcc $(CFLAGS) ssSet.c csapp.o -lpthread -o ssSet
 
+ssTest: ssTest.c csapp.o 
+	gcc $(CFLAGS) ssTest.c csapp.o -lpthread -o ssTest
+
 ssGet: ssGet.c csapp.o 
 	gcc $(CFLAGS) ssGet.c csapp.o -lpthread -o ssGet
 

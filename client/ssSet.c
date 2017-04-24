@@ -41,8 +41,9 @@ int main(int argc, char **argv)
     host = argv[1];     	// string - length of the host name shouldn't exceed 40 characters
     port = atoi(argv[2]);	// integer - shouldn't exceed 64k
     skey = atoi(argv[3]);	// integer - should be between 0 and 2^32 - 1
+	varname = (char*) calloc (sizeof(char), (15));
     varname = argv[4];		// string
-//	value = (char *) malloc ( sizeof(char) * (strlen(argv[5]) + 1));
+	value = (char *) calloc ( sizeof(char), (strlen(argv[5]) + 1));
 	value = argv[5];
 
     if(strlen(varname) > 15){
@@ -62,13 +63,13 @@ int main(int argc, char **argv)
     Rio_readinitb(&rio, clientfd);
 
 
-	Rio_writen(clientfd, "hello", 5);
-	Rio_writen(clientfd, "friend", 6);
-	Rio_writen(clientfd, "this is test", 12);
+//	Rio_writen(clientfd, "hello", 6);
+//	Rio_writen(clientfd, "friend", 7);
+//	Rio_writen(clientfd, "this is test", 13);
 	/* * *
 	 * * * 
 	 * * */
-/*
+
 	tmp = htonl(skey);
 
 	// send 4 byte password
@@ -86,21 +87,33 @@ int main(int argc, char **argv)
 	// type of the client - 0 and buffer
 	Rio_writen(clientfd, "0xxx", 4);
 
+/*
+	int j = strlen(varname) + 1;
+	int i = 0;
+	for(i = 0; i < 14; i++){
+		if(i > strlen(varname)){
+			varname[j] = 'X';
+			j++;
+		}
+	}
 
+	varname[j] = '\0';
+*/
+	Fputs(varname, stdout);
 	Rio_writen(clientfd, varname, 23 - 8);
 
 	uint32_t tmp2;	
 
-	//tmp = 0;
 	tmp2 = strlen(value);
-printf("The legnth of tmp2 is: %zd \n", tmp2);
-printf("The valueh of tmp2 is: %s \n", value);
+	printf("\nThe legnth of tmp2 is: %zd \n", tmp2);
+	printf("The valueh of tmp2 is: %s \n", value);
 	tmp2 = htonl(tmp2);
 	Rio_writen(clientfd, &tmp2, sizeof(tmp2));
+
 //	Rio_writen(clientfd, value, 4);
 
 //	Riio_writen(clientfd, value, strlen(value));
-*/	
+	
     Close(clientfd); //line:netp:echoclient:close
 
     exit(0);
