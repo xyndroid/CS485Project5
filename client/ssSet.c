@@ -21,6 +21,7 @@ int main(int argc, char **argv)
 	uint32_t tmp;
 	int skey_status = 1;
 	char type[1] = "1";
+	char *value;
 
 	/*  The command line arguments must be five */
 	/* 
@@ -29,10 +30,11 @@ int main(int argc, char **argv)
 		argv[2] - port number
 		argv[3] - secret key
 		argv[4] - variable name
+		argv[5] - value
 	*/
 
-    if (argc != 5) {
-	    fprintf(stderr, "usage: %s <host> <port number> <secret key> <variable name>\n", argv[0]);
+    if (argc != 6) {
+	    fprintf(stderr, "usage: %s <host> <port number> <secret key> <variable name> <value>\n", argv[0]);
 	    exit(0);
     }
 
@@ -40,9 +42,16 @@ int main(int argc, char **argv)
     port = atoi(argv[2]);	// integer - shouldn't exceed 64k
     skey = atoi(argv[3]);	// integer - should be between 0 and 2^32 - 1
     varname = argv[4];		// string
+//	value = (char *) malloc ( sizeof(char) * (strlen(argv[5]) + 1));
+	value = argv[5];
 
     if(strlen(varname) > 15){
-        fprintf(stderr, "The file name length should be less than 80 characters.\n"); 
+        fprintf(stderr, "The variable name length should be less than 15 characters.\n"); 
+        exit(0);    
+    }
+
+    if(strlen(value) > 100){
+        fprintf(stderr, "The value length should be less than 100 characters.\n"); 
         exit(0);    
     }
 
@@ -53,32 +62,45 @@ int main(int argc, char **argv)
     Rio_readinitb(&rio, clientfd);
 
 
+	Rio_writen(clientfd, "hello", 5);
+	Rio_writen(clientfd, "friend", 6);
+	Rio_writen(clientfd, "this is test", 12);
 	/* * *
 	 * * * 
 	 * * */
-
+/*
 	tmp = htonl(skey);
 
 	// send 4 byte password
     Rio_writen(clientfd, &tmp, sizeof(tmp)); 	// write n bytes  - send 
 
 	// key secret key status
-	Rio_readnb(&rio, &skey_status, sizeof(skey_status));
-	skey_status = ntohl(skey_status);
-	printf("key status is %d", skey_status);
-	if(skey_status == 0){
-		printf("failed\n");
-		Close(clientfd);
-		exit(0);
-	}
-	// type of the client - 1
-	Rio_writen(clientfd, "1", 1);
+//	Rio_readnb(&rio, &skey_status, sizeof(skey_status));
+//	skey_status = ntohl(skey_status);
+//	printf("key status is %d", skey_status);
+//	if(skey_status == 0){
+//		printf("failed\n");
+//		Close(clientfd);
+//		exit(0);
+//	}
+	// type of the client - 0 and buffer
+	Rio_writen(clientfd, "0xxx", 4);
 
-	// padding with three zeros
-	Rio_writen(clientfd, "xxx", 3);
 
-	//Rio_writen(clientfd, varname, 23 - 8);
-	
+	Rio_writen(clientfd, varname, 23 - 8);
+
+	uint32_t tmp2;	
+
+	//tmp = 0;
+	tmp2 = strlen(value);
+printf("The legnth of tmp2 is: %zd \n", tmp2);
+printf("The valueh of tmp2 is: %s \n", value);
+	tmp2 = htonl(tmp2);
+	Rio_writen(clientfd, &tmp2, sizeof(tmp2));
+//	Rio_writen(clientfd, value, 4);
+
+//	Riio_writen(clientfd, value, strlen(value));
+*/	
     Close(clientfd); //line:netp:echoclient:close
 
     exit(0);
