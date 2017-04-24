@@ -19,6 +19,7 @@ int main(int argc, char **argv)
     size_t n;
 
 	uint32_t tmp;
+	int skey_status = 1;
 	char type[1] = "1";
 
 	/*  The command line arguments must be five */
@@ -40,12 +41,7 @@ int main(int argc, char **argv)
     skey = atoi(argv[3]);	// integer - should be between 0 and 2^32 - 1
     varname = argv[4];		// string
 
-    if(strlen(host) > 40){
-        fprintf(stderr, "The host name length should be less than 40 characters.\n");
-        exit(0);
-    }   
-
-    if(strlen(varname) > 80){
+    if(strlen(varname) > 15){
         fprintf(stderr, "The file name length should be less than 80 characters.\n"); 
         exit(0);    
     }
@@ -66,20 +62,23 @@ int main(int argc, char **argv)
 	// send 4 byte password
     Rio_writen(clientfd, &tmp, sizeof(tmp)); 	// write n bytes  - send 
 
-    printf("Sent\n");
-
-	if((n = Rio_readnb(&rio, buf, MAXLINE) != 0)){
-
-		Fputs(buf, stdout);
-	
+	// key secret key status
+	Rio_readnb(&rio, &skey_status, sizeof(skey_status));
+	skey_status = ntohl(skey_status);
+	printf("key status is %d", skey_status);
+	if(skey_status == 0){
+		printf("failed\n");
+		Close(clientfd);
+		exit(0);
 	}
-	
 	// type of the client - 1
 	Rio_writen(clientfd, "1", 1);
 
 	// padding with three zeros
 	Rio_writen(clientfd, "xxx", 3);
 
+	Rio_writen(clientfd, varname, 23 - 8);
+	
     Close(clientfd); //line:netp:echoclient:close
 
     exit(0);

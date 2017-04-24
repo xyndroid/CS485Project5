@@ -30,8 +30,6 @@ int main(int argc, char **argv)
 
     port = atoi(argv[1]);	// integer between 0 and 64k
 
-	printf("port: %d, key: %d\n", port);
-
     listenfd = Open_listenfd(port);
 
     while (1) {
