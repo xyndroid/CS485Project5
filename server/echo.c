@@ -26,17 +26,21 @@ void echo(int connfd, char** argv)
 	int skey_status = 1;
 	int tmp;
 	int index;
-	uint32_t length = 0;
+	uint32_t length;
+
     Rio_readinitb(&rio, connfd);
 
 	skey = atoi(argv[2]);
 	char ***storage = NULL;	
-	
+/*	
 	printf("print here:\n");
-	n = Rio_readnb(&rio, buf, strlen(buf));
+	while((n = Rio_readnb(&rio, buf, strlen(buf))) != 0){
+	printf("it's not empty\n");
+	printf("recieved: %s\n", buf);
 	Fputs(buf, stdout);
+	}
+*/
 
-/*
 	// read secret key from client and check
 	n = Rio_readnb(&rio, &clientKey, sizeof(clientKey));
 	
@@ -70,18 +74,10 @@ void echo(int connfd, char** argv)
 		printf("varible name is %d bytes\n", strlen(variable));	
 		printf("variables is %s\n", variable);	
 
-		variable = substr(buf,19,22);
-	//	variable = ntohl(variable);
-		printf("varible name is %d bytes\n", strlen(variable));	
-		printf("variables is %s\n", variable);	
-
-//		n = Rio_readnb(&rio, &length, sizeof(length));
+		n = Rio_readnb(&rio, &length, sizeof(length));
 		length = ntohl(length);
 		printf("server received %d bytes\n",sizeof( length));	
 		printf("server received %d \n", length);	
-	
-
-
 
 		storage[index] = (char **) malloc (sizeof(char *) * 2);
 		storage[index][0] = (char *) malloc (sizeof(char) * ((23-8)));
@@ -95,8 +91,7 @@ void echo(int connfd, char** argv)
 	}else if(buf[0] == '2'){
 	}else if(buf[0] == '3'){
 	}
-*/
-/* $end echo */
+	/* $end echo */
 }
 
 char *substr(char *str, int start, int stop){
